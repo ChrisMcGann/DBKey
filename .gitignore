@@ -6,3 +6,14 @@
 
 /Data
 .db
+
+# Go build artifacts
+/dbkey
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/dist
+/build
