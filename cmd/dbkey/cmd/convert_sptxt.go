@@ -22,7 +22,7 @@ func convertSPTXT() error {
 
 	// Load modification database
 	modDB := core.DefaultModDatabase()
-	
+
 	// Load custom modifications from unimod_custom.csv if it exists
 	if _, err := os.Stat("unimod_custom.csv"); err == nil {
 		f, err := os.Open("unimod_custom.csv")
@@ -85,10 +85,10 @@ func convertSPTXT() error {
 	// Process spectra
 	count := 0
 	skipped := 0
-	
+
 	for reader.Next() {
 		spec := reader.Spectrum()
-		
+
 		// Apply mass offset if configured
 		if offset, ok := massOffsetMap[spec.Sequence]; ok {
 			spec.MassOffset = offset

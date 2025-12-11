@@ -23,7 +23,7 @@ func convertMSP() error {
 
 	// Load modification database
 	modDB := core.DefaultModDatabase()
-	
+
 	// Load custom modifications from unimod_custom.csv if it exists
 	if _, err := os.Stat("unimod_custom.csv"); err == nil {
 		f, err := os.Open("unimod_custom.csv")
@@ -86,10 +86,10 @@ func convertMSP() error {
 	// Process spectra
 	count := 0
 	skipped := 0
-	
+
 	for reader.Next() {
 		spec := reader.Spectrum()
-		
+
 		// Apply mass offset if configured
 		if offset, ok := massOffsetMap[spec.Sequence]; ok {
 			spec.MassOffset = offset
@@ -187,7 +187,7 @@ func loadMassOffsetCSV(path string) (map[string]float64, error) {
 
 	result := make(map[string]float64)
 	scanner := bufio.NewScanner(file)
-	
+
 	// Skip header line
 	if scanner.Scan() {
 		// header
@@ -233,7 +233,7 @@ func loadCompoundClassCSV(path string) (map[string]string, error) {
 
 	result := make(map[string]string)
 	scanner := bufio.NewScanner(file)
-	
+
 	// Skip header line
 	if scanner.Scan() {
 		// header

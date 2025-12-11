@@ -12,32 +12,32 @@ import (
 // Spectrum represents a single mass spectrum with all associated metadata.
 type Spectrum struct {
 	// Required fields
-	Sequence         string  // Peptide sequence
-	Charge           int     // Precursor charge state
-	PrecursorMZ      float64 // Precursor m/z
-	Peaks            []Peak  // Fragment peaks
-	FragmentationMode string // HCD, CID, etc.
-	MassAnalyzer     string  // FT, IT, etc.
+	Sequence          string  // Peptide sequence
+	Charge            int     // Precursor charge state
+	PrecursorMZ       float64 // Precursor m/z
+	Peaks             []Peak  // Fragment peaks
+	FragmentationMode string  // HCD, CID, etc.
+	MassAnalyzer      string  // FT, IT, etc.
 
 	// Optional metadata
-	RetentionTime    *float64 // RT or iRT
-	CollisionEnergy  *float64 // Normalized collision energy
-	Modifications    []Modification
-	Instrument       string
-	MassOffset       float64 // For massOffset CSV support
-	CompoundClass    string  // For compound class CSV support
-	
+	RetentionTime   *float64 // RT or iRT
+	CollisionEnergy *float64 // Normalized collision energy
+	Modifications   []Modification
+	Instrument      string
+	MassOffset      float64 // For massOffset CSV support
+	CompoundClass   string  // For compound class CSV support
+
 	// Internal tracking
-	SourceFile       string
-	SourceFormat     string // msp, sptxt, blib
+	SourceFile   string
+	SourceFormat string // msp, sptxt, blib
 }
 
 // Peak represents a single m/z, intensity pair with optional metadata.
 type Peak struct {
 	MZ         float64
 	Intensity  float64
-	Annotation string  // Ion annotation (e.g., "y3", "b2^2")
-	Charge     int     // Fragment charge (if available)
+	Annotation string // Ion annotation (e.g., "y3", "b2^2")
+	Charge     int    // Fragment charge (if available)
 }
 
 // Modification represents a peptide modification with position and mass shift.
@@ -143,7 +143,7 @@ func (s *Spectrum) ModString() string {
 	if len(s.Modifications) == 0 {
 		return ""
 	}
-	
+
 	var parts []string
 	for _, mod := range s.Modifications {
 		parts = append(parts, fmt.Sprintf("%.6f@%d", mod.Mass, mod.Position))

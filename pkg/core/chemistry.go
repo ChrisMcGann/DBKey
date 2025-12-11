@@ -5,13 +5,13 @@ import "math"
 
 // Atomic masses (monoisotopic)
 const (
-	MassH  = 1.0078250321
-	MassC  = 12.0000000000
-	MassN  = 14.0030740052
-	MassO  = 15.9949146221
-	MassS  = 31.9720706900
-	MassP  = 30.9737615100
-	
+	MassH = 1.0078250321
+	MassC = 12.0000000000
+	MassN = 14.0030740052
+	MassO = 15.9949146221
+	MassS = 31.9720706900
+	MassP = 30.9737615100
+
 	// Proton mass for charge calculations
 	ProtonMass = 1.00727646688
 )
@@ -49,7 +49,7 @@ var AminoAcidMasses = map[rune]AminoAcidComposition{
 // including modifications, then returns the m/z for a given charge state.
 func CalculatePeptideMass(sequence string, charge int, modifications []Modification) float64 {
 	comp := AminoAcidComposition{C: 0, H: 2, N: 0, O: 1, S: 0} // Add water
-	
+
 	for _, aa := range sequence {
 		if aaComp, ok := AminoAcidMasses[aa]; ok {
 			comp.C += aaComp.C
@@ -59,28 +59,28 @@ func CalculatePeptideMass(sequence string, charge int, modifications []Modificat
 			comp.S += aaComp.S
 		}
 	}
-	
+
 	mass := float64(comp.C)*MassC +
 		float64(comp.H)*MassH +
 		float64(comp.N)*MassN +
 		float64(comp.O)*MassO +
 		float64(comp.S)*MassS
-	
+
 	// Add modification masses
 	for _, mod := range modifications {
 		mass += mod.Mass
 	}
-	
+
 	// Calculate m/z: (mass + charge * proton) / charge
 	mz := (mass + float64(charge)*ProtonMass) / float64(charge)
-	
+
 	return mz
 }
 
 // CalculateNeutralMass computes the neutral monoisotopic mass of a peptide
 func CalculateNeutralMass(sequence string, modifications []Modification) float64 {
 	comp := AminoAcidComposition{C: 0, H: 2, N: 0, O: 1, S: 0} // Add water
-	
+
 	for _, aa := range sequence {
 		if aaComp, ok := AminoAcidMasses[aa]; ok {
 			comp.C += aaComp.C
@@ -90,18 +90,18 @@ func CalculateNeutralMass(sequence string, modifications []Modification) float64
 			comp.S += aaComp.S
 		}
 	}
-	
+
 	mass := float64(comp.C)*MassC +
 		float64(comp.H)*MassH +
 		float64(comp.N)*MassN +
 		float64(comp.O)*MassO +
 		float64(comp.S)*MassS
-	
+
 	// Add modification masses
 	for _, mod := range modifications {
 		mass += mod.Mass
 	}
-	
+
 	return mass
 }
 

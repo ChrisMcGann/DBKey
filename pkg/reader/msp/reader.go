@@ -155,7 +155,7 @@ func (r *Reader) parseName(spec *core.Spectrum, name string) error {
 func (r *Reader) parseComment(spec *core.Spectrum, comment string) error {
 	// Comment format: key=value key=value...
 	// Example: Parent=414.71 Collision_energy=35 Mods=1/-1,R,TMT_Pro ModString=SEQUENCE//TMT_Pro@R-1/4 iRT=61.01
-	
+
 	fields := strings.Fields(comment)
 	for _, field := range fields {
 		parts := strings.SplitN(field, "=", 2)
@@ -213,7 +213,7 @@ func (r *Reader) parseMods(spec *core.Spectrum, modsStr string) error {
 		// Format: count/position,AA,ModName
 		modName := parts[2]
 		posStr := parts[0]
-		
+
 		// Extract position
 		posParts := strings.Split(posStr, "/")
 		if len(posParts) == 2 {
@@ -237,7 +237,7 @@ func (r *Reader) parseMods(spec *core.Spectrum, modsStr string) error {
 func (r *Reader) parseModString(spec *core.Spectrum, modString string) error {
 	// Format: SEQUENCE//Mod@Pos/Charge or SEQUENCE//Mod@Pos
 	// Example: EIESAGDITFNR//TMT_Pro@R-1/4
-	
+
 	parts := strings.Split(modString, "//")
 	if len(parts) < 2 {
 		return nil

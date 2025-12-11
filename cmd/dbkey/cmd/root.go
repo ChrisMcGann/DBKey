@@ -151,7 +151,7 @@ func runConvert(cmd *cobra.Command, args []string) error {
 	fmt.Printf("Format: %s\n", inputFormat)
 	fmt.Printf("Fragmentation: %s\n", fragmentation)
 	fmt.Printf("Mass Analyzer: %s\n", massAnalyzer)
-	
+
 	if topN > 0 {
 		fmt.Printf("Top N filter: %d\n", topN)
 	}

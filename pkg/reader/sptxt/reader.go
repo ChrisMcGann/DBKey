@@ -179,16 +179,16 @@ func (r *Reader) parseInlineModifications(rawSeq string) (string, []core.Modific
 
 	// Pattern to match modifications: letter followed by [mass]
 	re := regexp.MustCompile(`([a-zA-Z]?)(\[\d+(?:\.\d+)?\])`)
-	
+
 	lastIdx := 0
 	for _, match := range re.FindAllStringSubmatchIndex(rawSeq, -1) {
 		// Add unmodified sequence before this match
 		sequence.WriteString(rawSeq[lastIdx:match[0]])
-		
+
 		// Get the amino acid and modification
 		aa := rawSeq[match[2]:match[3]]
 		modStr := rawSeq[match[4]:match[5]]
-		
+
 		// Parse mass from [mass]
 		modStr = strings.Trim(modStr, "[]")
 		mass, err := strconv.ParseFloat(modStr, 64)
@@ -213,10 +213,10 @@ func (r *Reader) parseInlineModifications(rawSeq string) (string, []core.Modific
 			})
 			position++
 		}
-		
+
 		lastIdx = match[1]
 	}
-	
+
 	// Add remaining sequence
 	sequence.WriteString(rawSeq[lastIdx:])
 
@@ -227,7 +227,7 @@ func (r *Reader) parseInlineModifications(rawSeq string) (string, []core.Modific
 func (r *Reader) parseComment(spec *core.Spectrum, comment string) error {
 	// Split by spaces, but be careful with quoted values
 	fields := strings.Fields(comment)
-	
+
 	for _, field := range fields {
 		parts := strings.SplitN(field, "=", 2)
 		if len(parts) != 2 {
@@ -275,7 +275,7 @@ func (r *Reader) parseComment(spec *core.Spectrum, comment string) error {
 func (r *Reader) parseMods(spec *core.Spectrum, modsStr string) error {
 	// Format: "2/-1,A,iTRAQ8plex/17,C,Carbamidomethyl"
 	parts := strings.Split(modsStr, "/")
-	
+
 	for i := 0; i < len(parts); i += 3 {
 		if i+2 >= len(parts) {
 			break
@@ -312,7 +312,7 @@ func (r *Reader) parseMods(spec *core.Spectrum, modsStr string) error {
 					break
 				}
 			}
-			
+
 			if !exists {
 				spec.Modifications = append(spec.Modifications, core.Modification{
 					Mass:     mass,

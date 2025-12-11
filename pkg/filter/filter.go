@@ -12,12 +12,12 @@ import (
 
 // Config holds filtering configuration
 type Config struct {
-	TopN          int      // Keep only top N most intense peaks (0 = no limit)
-	IntensityCutoff float64 // Keep only peaks above this % of base peak (0 = no cutoff)
-	IonTypes      []string // Keep only specified ion types (nil = all)
-	DeltaFragment float64  // Mass adjustment for fragments
-	OldModMass    float64  // Old modification mass to adjust
-	NewModMass    float64  // New modification mass
+	TopN            int      // Keep only top N most intense peaks (0 = no limit)
+	IntensityCutoff float64  // Keep only peaks above this % of base peak (0 = no cutoff)
+	IonTypes        []string // Keep only specified ion types (nil = all)
+	DeltaFragment   float64  // Mass adjustment for fragments
+	OldModMass      float64  // Old modification mass to adjust
+	NewModMass      float64  // New modification mass
 }
 
 // Apply applies all configured filters to a spectrum
@@ -140,7 +140,7 @@ func (c *Config) adjustFragmentMasses(spec *core.Spectrum) error {
 
 	for i := range spec.Peaks {
 		peak := &spec.Peaks[i]
-		
+
 		if peak.Annotation == "" {
 			continue
 		}
@@ -163,7 +163,7 @@ func (c *Config) adjustFragmentMasses(spec *core.Spectrum) error {
 			// b ions: add mass if modification is at or before the fragment position
 			// y ions: add mass if modification is after the fragment position (from C-term)
 			shouldAdjust := false
-			
+
 			if ionInfo.ionType == "b" && ionInfo.position >= mod.Position {
 				shouldAdjust = true
 			} else if ionInfo.ionType == "y" {
@@ -197,7 +197,7 @@ func parseIonAnnotation(annotation string) (*ionAnnotationInfo, error) {
 	// Pattern: (ion type)(number)[^(charge)]
 	re := regexp.MustCompile(`^([a-z])(\d+)(?:\^(\d+))?`)
 	matches := re.FindStringSubmatch(annotation)
-	
+
 	if len(matches) < 3 {
 		return nil, fmt.Errorf("invalid ion annotation format: %s", annotation)
 	}

@@ -8,8 +8,8 @@ import (
 	"math"
 	"time"
 
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/ChrisMcGann/DBKey/pkg/core"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // Writer handles writing spectra to SQLite database files
@@ -175,22 +175,22 @@ func (w *Writer) WriteSpectrum(spec *core.Spectrum) error {
 
 	// Insert into CompoundTable
 	_, err := w.compoundStmt.Exec(
-		w.compoundID,               // CompoundId
-		spec.ModString(),            // Formula (reuse for mods)
-		spec.Name(),                 // Name
-		"",                          // Synonyms
-		tag,                         // Tag
-		spec.Sequence,               // Sequence
-		"",                          // CASId
-		"",                          // ChemSpiderId
-		"",                          // HMDBId
-		"",                          // KEGGId
-		"",                          // PubChemId
-		"",                          // Structure
-		nil,                         // mzCloudId
-		spec.CompoundClass,          // CompoundClass
-		"",                          // SmilesDescription
-		"",                          // InChiKey
+		w.compoundID,       // CompoundId
+		spec.ModString(),   // Formula (reuse for mods)
+		spec.Name(),        // Name
+		"",                 // Synonyms
+		tag,                // Tag
+		spec.Sequence,      // Sequence
+		"",                 // CASId
+		"",                 // ChemSpiderId
+		"",                 // HMDBId
+		"",                 // KEGGId
+		"",                 // PubChemId
+		"",                 // Structure
+		nil,                // mzCloudId
+		spec.CompoundClass, // CompoundClass
+		"",                 // SmilesDescription
+		"",                 // InChiKey
 	)
 	if err != nil {
 		return fmt.Errorf("failed to insert compound: %w", err)
@@ -217,35 +217,35 @@ func (w *Writer) WriteSpectrum(spec *core.Spectrum) error {
 
 	// Insert into SpectrumTable
 	_, err = w.spectrumStmt.Exec(
-		w.compoundID,          // SpectrumId (same as CompoundId for 1:1 mapping)
-		w.compoundID,          // CompoundId
-		"",                    // mzCloudURL
-		"",                    // ScanFilter
-		rt,                    // RetentionTime
-		0,                     // ScanNumber
-		spec.PrecursorMZ,      // PrecursorMass
-		neutralMass,           // NeutralMass
-		ce,                    // CollisionEnergy
-		"+",                   // Polarity
+		w.compoundID,           // SpectrumId (same as CompoundId for 1:1 mapping)
+		w.compoundID,           // CompoundId
+		"",                     // mzCloudURL
+		"",                     // ScanFilter
+		rt,                     // RetentionTime
+		0,                      // ScanNumber
+		spec.PrecursorMZ,       // PrecursorMass
+		neutralMass,            // NeutralMass
+		ce,                     // CollisionEnergy
+		"+",                    // Polarity
 		spec.FragmentationMode, // FragmentationMode
-		"ESI",                 // IonizationMode
-		spec.MassAnalyzer,     // MassAnalyzer
-		spec.Instrument,       // InstrumentName
-		"",                    // InstrumentOperator
-		"",                    // RawFileURL
-		mzBlob,                // blobMass
-		intBlob,               // blobIntensity
-		nil,                   // blobAccuracy
-		nil,                   // blobResolution
-		nil,                   // blobNoises
-		nil,                   // blobFlags
-		nil,                   // blobTopPeaks
-		nil,                   // Version
-		nil,                   // CreationDate
-		"",                    // Curator
-		"",                    // CurationType
-		"",                    // PrecursorIonType
-		"",                    // Acession
+		"ESI",                  // IonizationMode
+		spec.MassAnalyzer,      // MassAnalyzer
+		spec.Instrument,        // InstrumentName
+		"",                     // InstrumentOperator
+		"",                     // RawFileURL
+		mzBlob,                 // blobMass
+		intBlob,                // blobIntensity
+		nil,                    // blobAccuracy
+		nil,                    // blobResolution
+		nil,                    // blobNoises
+		nil,                    // blobFlags
+		nil,                    // blobTopPeaks
+		nil,                    // Version
+		nil,                    // CreationDate
+		"",                     // Curator
+		"",                     // CurationType
+		"",                     // PrecursorIonType
+		"",                     // Acession
 	)
 	if err != nil {
 		return fmt.Errorf("failed to insert spectrum: %w", err)
