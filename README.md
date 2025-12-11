@@ -1,4 +1,23 @@
 # DBKey
+DBKey converts spectral libraries (MSP/SPTXT) into SQLite databases compatible with RTLS/mzVault workflows.
+
+## Quick start (command line)
+
+1. Install Go 1.24+ and build the CLI:
+   ```bash
+   go build -o dbkey ./cmd/dbkey
+   ```
+   (Or download a prebuilt binary from Releases.)
+2. Convert an MSP file to SQLite:
+   ```bash
+   ./dbkey convert --in examples/PrositTMTProDBKeyExample.msp --out library.db --mass-analyzer FT --fragmentation HCD
+   ```
+3. Convert an SPTXT file:
+   ```bash
+   ./dbkey convert --in examples/SpectraSTDBKeyExample.sptxt --out library.db --mass-analyzer IT --fragmentation CID
+   ```
+4. For more flags (top-N filtering, ion types, fragment adjustments), see README_GO.md.
+
 These instructions will help users to build the DBKey docker image, execute it, and connect to the shiny webserver.
 
 ## Clone the repo:
