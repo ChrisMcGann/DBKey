@@ -12,6 +12,13 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+const (
+	// Date format for HeaderTable (ISO 8601)
+	headerDateFormat = "2006-01-02"
+	// Date format for MaintenanceTable (space-separated, matches R implementation)
+	maintenanceDateFormat = "2006 01 02"
+)
+
 // Writer handles writing spectra to SQLite database files
 type Writer struct {
 	db           *sql.DB
@@ -98,7 +105,7 @@ func (w *Writer) createTables() error {
 		Curator TEXT,
 		CurationType TEXT,
 		PrecursorIonType TEXT,
-		Acession TEXT
+		Accession TEXT
 	);
 
 	CREATE TABLE IF NOT EXISTS HeaderTable (
@@ -150,7 +157,7 @@ func (w *Writer) prepareStatements() error {
 			InstrumentOperator, RawFileURL, blobMass, blobIntensity,
 			blobAccuracy, blobResolution, blobNoises, blobFlags,
 			blobTopPeaks, Version, CreationDate, Curator, CurationType,
-			PrecursorIonType, Acession
+			PrecursorIonType, Accession
 		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`)
 	if err != nil {
@@ -245,7 +252,7 @@ func (w *Writer) WriteSpectrum(spec *core.Spectrum) error {
 		"",                     // Curator
 		"",                     // CurationType
 		"",                     // PrecursorIonType
-		"",                     // Acession
+		"",                     // Accession
 	)
 	if err != nil {
 		return fmt.Errorf("failed to insert spectrum: %w", err)
@@ -276,7 +283,7 @@ func (w *Writer) Finalize() error {
 	_, err := w.db.Exec(`
 		INSERT INTO HeaderTable (version, CreationDate, LastModifiedDate, Description, Company, ReadOnly, UserAccess, PartialEdits)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-	`, 5, time.Now().Format("2006-01-02"), time.Now().Format("2006-01-02"), "", "", false, "", false)
+	`, 5, time.Now().Format(headerDateFormat), time.Now().Format(headerDateFormat), "", "", false, "", false)
 	if err != nil {
 		return fmt.Errorf("failed to insert header: %w", err)
 	}
@@ -285,7 +292,7 @@ func (w *Writer) Finalize() error {
 	_, err = w.db.Exec(`
 		INSERT INTO MaintenanceTable (CreationDate, NoofCompoundsModified, Description)
 		VALUES (?, ?, ?)
-	`, time.Now().Format("2006 01 02"), nil, "")
+	`, time.Now().Format(maintenanceDateFormat), nil, "")
 	if err != nil {
 		return fmt.Errorf("failed to insert maintenance: %w", err)
 	}
