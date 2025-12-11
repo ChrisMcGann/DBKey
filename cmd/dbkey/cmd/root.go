@@ -142,9 +142,9 @@ func runConvert(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("invalid input format '%s', must be msp, sptxt, or blib", inputFormat)
 	}
 
-	// For now, only MSP is implemented
-	if inputFormat != "msp" {
-		return fmt.Errorf("format '%s' is not yet implemented, only 'msp' is currently supported", inputFormat)
+	// BLIB is not yet implemented
+	if inputFormat == "blib" {
+		return fmt.Errorf("format 'blib' is not yet implemented")
 	}
 
 	fmt.Printf("Converting %s to %s...\n", inputFile, outputFile)
@@ -162,6 +162,13 @@ func runConvert(cmd *cobra.Command, args []string) error {
 		fmt.Printf("Ion types: %s\n", ionTypes)
 	}
 
-	// Call the conversion logic
-	return convertMSP()
+	// Call the appropriate conversion logic
+	switch inputFormat {
+	case "msp":
+		return convertMSP()
+	case "sptxt":
+		return convertSPTXT()
+	default:
+		return fmt.Errorf("unsupported format: %s", inputFormat)
+	}
 }

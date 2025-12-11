@@ -1,19 +1,18 @@
+// Package cmd provides SPTXT conversion implementation
 package cmd
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/ChrisMcGann/DBKey/pkg/core"
 	"github.com/ChrisMcGann/DBKey/pkg/filter"
-	"github.com/ChrisMcGann/DBKey/pkg/reader/msp"
+	"github.com/ChrisMcGann/DBKey/pkg/reader/sptxt"
 	"github.com/ChrisMcGann/DBKey/pkg/writer/sqlite"
 )
 
-func convertMSP() error {
+func convertSPTXT() error {
 	// Open input file
 	inFile, err := os.Open(inputFile)
 	if err != nil {
@@ -35,8 +34,8 @@ func convertMSP() error {
 		}
 	}
 
-	// Create MSP reader
-	reader := msp.NewReader(inFile, modDB)
+	// Create SPTXT reader
+	reader := sptxt.NewReader(inFile, modDB)
 
 	// Create SQLite writer
 	writer, err := sqlite.NewWriter(outputFile)
@@ -104,16 +103,16 @@ func convertMSP() error {
 		if fragmentation != "" && fragmentation != "read" {
 			spec.FragmentationMode = fragmentation
 		} else if spec.FragmentationMode == "" {
-			// Default to HCD if not specified
-			spec.FragmentationMode = "HCD"
+			// Default to CID for SpectraST files
+			spec.FragmentationMode = "CID"
 		}
 
 		// Set mass analyzer
 		if massAnalyzer != "" {
 			spec.MassAnalyzer = massAnalyzer
 		} else if spec.MassAnalyzer == "" {
-			// Default to FT if not specified
-			spec.MassAnalyzer = "FT"
+			// Default to IT for SpectraST files
+			spec.MassAnalyzer = "IT"
 		}
 
 		// Set collision energy if specified
@@ -121,8 +120,8 @@ func convertMSP() error {
 			spec.CollisionEnergy = &collisionEnergy
 		}
 
-		// Recalculate precursor m/z from sequence and modifications
-		if len(spec.Sequence) > 0 && spec.Charge > 0 {
+		// Recalculate precursor m/z from sequence and modifications if not set
+		if spec.PrecursorMZ == 0 && len(spec.Sequence) > 0 && spec.Charge > 0 {
 			calculatedMZ := core.CalculatePeptideMass(spec.Sequence, spec.Charge, spec.Modifications)
 			// Add mass offset to precursor if configured
 			if spec.MassOffset != 0 {
@@ -176,91 +175,4 @@ func convertMSP() error {
 	fmt.Printf("Output: %s\n", outputFile)
 
 	return nil
-}
-
-func loadMassOffsetCSV(path string) (map[string]float64, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, fmt.Errorf("failed to open file: %w", err)
-	}
-	defer file.Close()
-
-	result := make(map[string]float64)
-	scanner := bufio.NewScanner(file)
-	
-	// Skip header line
-	if scanner.Scan() {
-		// header
-	}
-
-	lineNum := 1
-	for scanner.Scan() {
-		lineNum++
-		line := strings.TrimSpace(scanner.Text())
-		if line == "" {
-			continue
-		}
-
-		parts := strings.Split(line, ",")
-		if len(parts) < 2 {
-			return nil, fmt.Errorf("line %d: expected 2 fields (Sequence,massOffset), got %d", lineNum, len(parts))
-		}
-
-		sequence := strings.TrimSpace(parts[0])
-		offsetStr := strings.TrimSpace(parts[1])
-
-		offset, err := strconv.ParseFloat(offsetStr, 64)
-		if err != nil {
-			return nil, fmt.Errorf("line %d: invalid mass offset value '%s': %w", lineNum, offsetStr, err)
-		}
-
-		result[sequence] = offset
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, fmt.Errorf("error reading CSV: %w", err)
-	}
-
-	return result, nil
-}
-
-func loadCompoundClassCSV(path string) (map[string]string, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, fmt.Errorf("failed to open file: %w", err)
-	}
-	defer file.Close()
-
-	result := make(map[string]string)
-	scanner := bufio.NewScanner(file)
-	
-	// Skip header line
-	if scanner.Scan() {
-		// header
-	}
-
-	lineNum := 1
-	for scanner.Scan() {
-		lineNum++
-		line := strings.TrimSpace(scanner.Text())
-		if line == "" {
-			continue
-		}
-
-		parts := strings.Split(line, ",")
-		if len(parts) < 2 {
-			return nil, fmt.Errorf("line %d: expected 2 fields (Sequence,CompoundClass), got %d", lineNum, len(parts))
-		}
-
-		sequence := strings.TrimSpace(parts[0])
-		class := strings.TrimSpace(parts[1])
-
-		result[sequence] = class
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, fmt.Errorf("error reading CSV: %w", err)
-	}
-
-	return result, nil
 }
